@@ -1,3 +1,4 @@
+// +build !appengine
 package firebase
 
 import (
@@ -11,6 +12,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"google.golang.org/appengine/urlfetch"
 )
 
 // Certificates holds a collection of public certificates that are fetched from
@@ -20,7 +23,7 @@ type Certificates struct {
 	// URL to retrieve the public certificates, meant to be initialized only once.
 	URL string
 	// Transport is the network transport, meant to be initialized only once.
-	Transport http.RoundTripper
+	Transport urlfetch.Transport
 	// lock for the certs and the exp
 	sync.RWMutex
 	// certs is a map of all the public x509 certificates hosted at URL.
@@ -66,11 +69,8 @@ func (c *Certificates) ensureLoaded() error {
 }
 
 // download fetches the public certificates hosted at a given URL.
-func download(url string, transport http.RoundTripper) (map[string]*x509.Certificate, time.Duration, error) {
-	if transport == nil {
-		transport = http.DefaultTransport
-	}
-	client := http.Client{Transport: transport}
+func download(url string, transport urlfetch.Transport) (map[string]*x509.Certificate, time.Duration, error) {
+	client := urlfetch.Client(transport.Context)
 	resp, err := client.Get(url)
 	if err != nil {
 		return nil, 0, err
