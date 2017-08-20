@@ -1,7 +1,6 @@
 package firebase
 
 import (
-	"net/http"
 	"sync"
 
 	"google.golang.org/appengine/urlfetch"
