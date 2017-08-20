@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"net/http"
-
 	"github.com/SermoDigital/jose/crypto"
 	"github.com/SermoDigital/jose/jws"
 	"github.com/SermoDigital/jose/jwt"
+
+	"google.golang.org/appengine/urlfetch"
 )
 
 // clientCertURL is the URL containing the public keys for the Google certs
@@ -19,7 +19,7 @@ const clientCertURL = "https://www.googleapis.com/robot/v1/metadata/x509/securet
 // defaultAcceptableExpSkew is the default expiry leeway.
 const defaultAcceptableExpSkew = 300 * time.Second
 
-func verify(projectID, tokenString string, transport http.RoundTripper) (*Token, error) {
+func verify(projectID, tokenString string, transport urlfetch.Transport) (*Token, error) {
 	decodedJWT, err := jws.ParseJWT([]byte(tokenString))
 	if err != nil {
 		return nil, err
