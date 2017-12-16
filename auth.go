@@ -1,6 +1,7 @@
 package firebase
 
 import (
+	"context"
 	"sync"
 
 	"google.golang.org/appengine/urlfetch"
@@ -71,8 +72,8 @@ func (a *Auth) CreateCustomToken(uid string, developerClaims *Claims) (string, e
 // token is valid, meaning: the token is properly signed, has not expired,
 // and it was issued for the project associated with this Auth instance
 // (which by default is extracted from your service account).
-func (a *Auth) VerifyIDToken(tokenString string) (*Token, error) {
-	return a.VerifyIDTokenWithTransport(tokenString, urlfetch.Transport{})
+func (a *Auth) VerifyIDToken(c context.Context, tokenString string) (*Token, error) {
+	return a.VerifyIDTokenWithTransport(tokenString, urlfetch.Transport{Context: c})
 }
 
 // VerifyIDToken parses and verifies a Firebase ID Token.
